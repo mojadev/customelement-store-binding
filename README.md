@@ -1,11 +1,20 @@
 # Redux Custom Elements Bindings
 
+## About
+
+Minimal boilerplate redux bindings for web components with the following features:
+
+- Based on decorators rather than connect / map function boilerplate
+- Test-friendly without forcing an approach to the user
+- Scopes: No direct binding to the store and support for multiple stores (if you want that)
+- Minimal footprint and dependencies
+
 ## tl;dr
 
 A simple WebComponent using this library (and lit-Element, which is not required):
 
 ```typescript
-// this is LitElement, not required for this lib
+// this is LitElement, which is not required, but makes the example less verbose
 @customElement('todo-count')
 // This registers the default store
 @useStore({ renderFn: LIT_ELEMENT })
@@ -27,15 +36,6 @@ export class TodoCountComponent extends LitElement {
   }
 }
 ```
-
-## About
-
-Minimal boilerplate redux bindings for web components with the following features:
-
-- Based on decorators rather than connect / map functions
-- Scopes: No direct binding to the store and support for multiple stores (if you want)
-- Fully testable with && without redux functionally
-- Minimal footprint
 
 ## Getting Started
 
@@ -101,22 +101,66 @@ Notice that you do not need any decorators for dispatching actions. DOM Events f
 
 ## Testing
 
+Testing is quite easy and can be done either in a unit-test like way or in a more integrative way. The first approach is using the provided MockStore and provides state changes directly by setting the state, while actions are only observed. the latter approach creates an actual redux store and tests your component against this store, focusing on the real behaviour while sacrifying stricter test boundaries.
+
+You can find full examples of both ways in the [examples]('./examples/todo-lit-element'), but as a reference:
+
+### Testing against the mock store
+
+Register a mock store and modify it directly in your tests:
+
 ```typescript
-import { resetStoreRegistry, registerDefaultStore } from 'webcomponent-store-binding';
+let store: MockStore<AppRootState>;
 
-describe("My component", () => {
-  let storeMock = {
-     getState: // your mock function
-     subscribe:
-  } as Store
-  beforeEach(() => {
+beforeEach(() => {
+  store = new MockStore<AppRootState>({ todos: [] });
+  registerDefaultStore(store);
+});
 
-     registerDefaultStore()
-  })
+afterEach(() => {
+  resetStoreRegistry();
+});
 
-  afterEach(() => {
+it('should display all todos from the store is updated', async () => {
+  const root = (await createElement()).shadowRoot as ShadowRoot;
+  store.updateState({ todos: [{ id: '1234', title: 'hello', done: false }] });
 
-  })
-})
-
+  expect(root?.querySelectorAll('li').length).toBe(1);
+});
 ```
+
+### Testing against a real store
+
+Create a real store (with the important reducer subset) and run your tests against it:
+
+```typescript
+beforeEach(() => {
+  // use the actual store
+  registerDefaultStore(configureStore({ reducer: todos }));
+});
+
+afterEach(() => {
+  resetStoreRegistry();
+});
+
+it('should add a todo when entering a text and clicking on add', async () => {
+  const expectedText = 'New Todo';
+  const root = (await createElement()).shadowRoot as ShadowRoot;
+
+  enterTodoText(root, expectedText);
+  clickAddButton(root);
+  await tick();
+
+  const todoItems = root?.querySelectorAll('li > span') as NodeListOf<
+    HTMLSpanElement
+  >;
+  expect(todoItems.length).toBe(1);
+  expect(todoItems[0].innerText.trim()).toMatch(expectedText);
+});
+```
+
+## Open Topics
+
+- Evaluate pure JavaScript Examples
+- Add more integration examples and connectors (Angular, React, Stencil)
+- Add more examples for non-redux stores (mobx, akita, etc.)

@@ -1,21 +1,30 @@
 {
   "name": "customelement-store-binding",
   "version": "0.1.0",
-  "description": "Loosely couple custom elements to your redux store without boilerplate code",
+  "description": "Connect redux to your web components (however you write them) without effort or tight coupling",
   "main": "dist/index.js",
   "scripts": {
     "clean": "rimraf ./dist",
     "build": "npm run clean && tsc",
-    "test": "jest"
+    "test": "jest",
+    "prepublish": "npm run build && npm run test"
   },
   "author": "Jannis Mosshammer <mojadev@gmail.com>",
   "types": "./dist/index.d.ts",
+  "keywords": [
+    "web-components",
+    "redux",
+    "store",
+    "custom elements",
+    "library",
+    "connect"
+  ],
   "license": "MIT",
   "dependencies": {
-    "@babel/preset-env": "^7.8.4",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.8.4",
     "@types/jest": "^25.1.2",
     "@reduxjs/toolkit": "^1.2.5",
     "@types/redux": "^3.6.0",
