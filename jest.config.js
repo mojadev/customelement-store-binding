@@ -4,5 +4,6 @@
 module.exports = {
   coverageDirectory: 'coverage',
   preset: 'ts-jest',
+  testPathIgnorePatterns: ['/node_modules/', '/examples/'],
   testEnvironment: 'node'
 };

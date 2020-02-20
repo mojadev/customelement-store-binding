@@ -1,8 +1,8 @@
-# Redux Custom Elements Bindings
+# Customelement Store-Binding
 
 ## About
 
-Minimal boilerplate redux bindings for web components with the following features:
+Minimal boilerplate redux-ish store bindings for web components with the following features:
 
 - Based on decorators rather than connect / map function boilerplate
 - Test-friendly without forcing an approach to the user
@@ -103,7 +103,7 @@ Notice that you do not need any decorators for dispatching actions. DOM Events f
 
 Testing is quite easy and can be done either in a unit-test like way or in a more integrative way. The first approach is using the provided MockStore and provides state changes directly by setting the state, while actions are only observed. the latter approach creates an actual redux store and tests your component against this store, focusing on the real behaviour while sacrifying stricter test boundaries.
 
-You can find full examples of both ways in the [examples]('./examples/todo-lit-element'), but as a reference:
+You can find full examples of both ways in the [examples](./examples/todo-lit-element), but as a reference:
 
 ### Testing against the mock store
 
