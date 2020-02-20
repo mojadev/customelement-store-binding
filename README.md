@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/mojadev/customelement-store-binding.svg?branch=master)](https://travis-ci.org/mojadev/customelement-store-binding)
+
 # Customelement Store-Binding
 
 ## About
@@ -161,6 +163,7 @@ it('should add a todo when entering a text and clicking on add', async () => {
 
 ## Open Topics
 
+- Improve/Enforce type-safety
 - Evaluate pure JavaScript Examples
 - Add more integration examples and connectors (Angular, React, Stencil)
 - Add more examples for non-redux stores (mobx, akita, etc.)
