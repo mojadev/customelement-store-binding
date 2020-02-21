@@ -1,13 +1,12 @@
 {
   "name": "customelement-store-binding",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Connect redux-ish stores to your web components (however you write them) without effort or tight coupling",
   "main": "dist/index.js",
   "scripts": {
     "clean": "rimraf ./dist",
     "build": "npm run clean && tsc",
-    "test": "jest",
-    "prepublish": "npm run build && npm run test"
+    "test": "jest"
   },
   "author": "Jannis Mosshammer <mojadev@gmail.com>",
   "types": "./dist/index.d.ts",

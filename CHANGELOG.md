@@ -1,6 +1,6 @@
 # Changelog
 
-## V.0.2.0
+## V.0.2.1
 
 - Provide ES Modules instead of CommonJS
 
