@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const GLOBAL_EVENT_NAME = 'dispatchStoreAction';
 const eventListeners = [];
 /**
@@ -7,10 +5,9 @@ const eventListeners = [];
  *
  * @param el: the element that will be updated.
  */
-function LIT_ELEMENT(el) {
+export function LIT_ELEMENT(el) {
     el.performUpdate();
 }
-exports.LIT_ELEMENT = LIT_ELEMENT;
 /**
  * Wrap the given action in a CustomEvent that can be dispatched and
  * is supported by the dom support.
@@ -20,7 +17,7 @@ exports.LIT_ELEMENT = LIT_ELEMENT;
  *
  * @param action Any action that should be dispatched
  */
-exports.storeAction = (action) => {
+export const storeAction = (action) => {
     return new CustomEvent(GLOBAL_EVENT_NAME, {
         composed: true,
         bubbles: true,
@@ -32,7 +29,7 @@ exports.storeAction = (action) => {
  *
  * @param store The store that should be updated on DOM events
  */
-exports.enableDomEventForStore = (store) => {
+export const enableDomEventForStore = (store) => {
     if (typeof document === 'undefined') {
         return;
     }
@@ -44,7 +41,7 @@ exports.enableDomEventForStore = (store) => {
 /**
  * Clear all store event bindings.
  */
-exports.clearDomEventsForStores = () => {
+export const clearDomEventsForStores = () => {
     if (typeof document === 'undefined') {
         return;
     }

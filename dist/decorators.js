@@ -1,7 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-require("reflect-metadata");
-const binding_1 = require("./binding");
+import 'reflect-metadata';
+import { getStore, DEFAULT } from './binding';
 const selectionBinding = Symbol('selectionBinding');
 const updateStateBindings = Symbol('updateStateBindings');
 const unsubscribe = Symbol('unsubscribe');
@@ -16,7 +14,7 @@ const boundStore = Symbol('boundStore');
  * - scope (optional)       The scope symbol under which the store can be found
  * - renderFn (optional)    The function that should be called to trigger rendering.
  */
-exports.useStore = (options) => {
+export const useStore = (options) => {
     const validOptions = options || {};
     return function classDecorator(constructor) {
         var _a;
@@ -31,13 +29,13 @@ exports.useStore = (options) => {
                 super(args);
                 this[_a] = () => { };
                 if (validOptions.scope) {
-                    this[boundStore] = binding_1.getStore(validOptions.scope) || this[boundStore];
+                    this[boundStore] = getStore(validOptions.scope) || this[boundStore];
                 }
                 else if (validOptions.store) {
                     this[boundStore] = validOptions.store;
                 }
                 else {
-                    this[boundStore] = binding_1.getStore(binding_1.DEFAULT) || this[boundStore];
+                    this[boundStore] = getStore(DEFAULT) || this[boundStore];
                 }
                 if (!this[boundStore]) {
                     console.log('No store bound, ignoring annotations');
@@ -82,6 +80,6 @@ exports.useStore = (options) => {
  *
  * @param selector  The selector function that should be called
  */
-exports.bindSelector = (selector) => {
+export const bindSelector = (selector) => {
     return Reflect.metadata(selectionBinding, { selector });
 };

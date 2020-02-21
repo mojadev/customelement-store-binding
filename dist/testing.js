@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class MockStore {
+export class MockStore {
     constructor(state) {
         this.dispatched = [];
         this.subscriber = [];
@@ -23,4 +21,3 @@ class MockStore {
         this.subscriber.forEach(x => x());
     }
 }
-exports.MockStore = MockStore;
