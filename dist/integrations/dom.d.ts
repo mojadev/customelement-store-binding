@@ -1,10 +1,4 @@
-import { StoreLike, AnyAction } from './types';
-/**
- * Enable LitElement support, e.g. performUpdate after store changes.
- *
- * @param el: the element that will be updated.
- */
-export declare function LIT_ELEMENT(el: LitElementTrait): void;
+import { StoreLike, AnyAction } from "../types";
 /**
  * Wrap the given action in a CustomEvent that can be dispatched and
  * is supported by the dom support.
@@ -25,7 +19,3 @@ export declare const enableDomEventForStore: <S>(store: StoreLike<S>) => void;
  * Clear all store event bindings.
  */
 export declare const clearDomEventsForStores: () => void;
-declare type LitElementTrait = {
-    performUpdate: () => {};
-} | any;
-export {};

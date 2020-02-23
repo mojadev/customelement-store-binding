@@ -1,13 +1,5 @@
-const GLOBAL_EVENT_NAME = 'dispatchStoreAction';
+import { GLOBAL_EVENT_NAME } from "./symbols";
 const eventListeners = [];
-/**
- * Enable LitElement support, e.g. performUpdate after store changes.
- *
- * @param el: the element that will be updated.
- */
-export function LIT_ELEMENT(el) {
-    el.performUpdate();
-}
 /**
  * Wrap the given action in a CustomEvent that can be dispatched and
  * is supported by the dom support.
@@ -30,7 +22,7 @@ export const storeAction = (action) => {
  * @param store The store that should be updated on DOM events
  */
 export const enableDomEventForStore = (store) => {
-    if (typeof document === 'undefined') {
+    if (typeof document === "undefined") {
         return;
     }
     eventListeners.push((evt) => {
@@ -42,7 +34,7 @@ export const enableDomEventForStore = (store) => {
  * Clear all store event bindings.
  */
 export const clearDomEventsForStores = () => {
-    if (typeof document === 'undefined') {
+    if (typeof document === "undefined") {
         return;
     }
     eventListeners.forEach(eventListener => document.removeEventListener(GLOBAL_EVENT_NAME, eventListener));

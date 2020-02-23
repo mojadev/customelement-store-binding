@@ -1,11 +1,12 @@
 {
   "name": "customelement-store-binding",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Connect redux-ish stores to your web components (however you write them) without effort or tight coupling",
-  "main": "dist/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/index.js",
   "scripts": {
     "clean": "rimraf ./dist",
-    "build": "npm run clean && tsc",
+    "build": "npm run clean && tsc && tsc --module commonjs --outDir ./dist/cjs",
     "test": "jest"
   },
   "author": "Jannis Mosshammer <mojadev@gmail.com>",
@@ -21,11 +22,14 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "@babel/cli": "^7.8.4",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
-    "@types/jest": "^25.1.2",
+    "@babel/core": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
     "@reduxjs/toolkit": "^1.2.5",
+    "@types/jest": "^25.1.2",
     "@types/redux": "^3.6.0",
     "jest": "^25.1.0",
     "redux": "^4.0.5",

@@ -1,6 +1,8 @@
-import "reflect-metadata";
-import { getStore, DEFAULT } from "./binding";
-import { boundStore, updateStateBindings, unsubscribe, selectionBinding } from "./symbols";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+require("reflect-metadata");
+const binding_1 = require("./binding");
+const symbols_1 = require("./symbols");
 /**
  * Subscribe this component to the given store.
  *
@@ -11,7 +13,7 @@ import { boundStore, updateStateBindings, unsubscribe, selectionBinding } from "
  * - scope (optional)       The scope symbol under which the store can be found
  * - renderFn (optional)    The function that should be called to trigger rendering.
  */
-export const useStore = (options) => {
+exports.useStore = (options) => {
     const validOptions = options || {};
     return function classDecorator(constructor) {
         var _a;
@@ -26,21 +28,21 @@ export const useStore = (options) => {
                 super(args);
                 this[_a] = () => { };
                 if (validOptions.scope) {
-                    this[boundStore] = getStore(validOptions.scope) || this[boundStore];
+                    this[symbols_1.boundStore] = binding_1.getStore(validOptions.scope) || this[symbols_1.boundStore];
                 }
                 else if (validOptions.store) {
-                    this[boundStore] = validOptions.store;
+                    this[symbols_1.boundStore] = validOptions.store;
                 }
                 else {
-                    this[boundStore] = getStore(DEFAULT) || this[boundStore];
+                    this[symbols_1.boundStore] = binding_1.getStore(binding_1.DEFAULT) || this[symbols_1.boundStore];
                 }
-                if (!this[boundStore]) {
+                if (!this[symbols_1.boundStore]) {
                     console.log("No store bound, ignoring annotations");
                     return;
                 }
-                this[updateStateBindings]();
-                this[unsubscribe] = this[boundStore].subscribe(() => {
-                    this[updateStateBindings]();
+                this[symbols_1.updateStateBindings]();
+                this[symbols_1.unsubscribe] = this[symbols_1.boundStore].subscribe(() => {
+                    this[symbols_1.updateStateBindings]();
                     if (validOptions.renderFn) {
                         validOptions.renderFn(this);
                     }
@@ -54,7 +56,7 @@ export const useStore = (options) => {
              * this has to be cleaned up.
              */
             disconnectedCallback() {
-                this[unsubscribe]();
+                this[symbols_1.unsubscribe]();
                 if (constructor.prototype.disconnectedCallback) {
                     constructor.prototype.disconnectedCallback.call(this);
                 }
@@ -62,17 +64,17 @@ export const useStore = (options) => {
             /**
              * Update the bound properties and reselect the state.
              */
-            [(_a = unsubscribe, updateStateBindings)]() {
-                if (!this[boundStore]) {
+            [(_a = symbols_1.unsubscribe, symbols_1.updateStateBindings)]() {
+                if (!this[symbols_1.boundStore]) {
                     return;
                 }
                 const boundProperties = [
                     ...Object.getOwnPropertyNames(this),
                     ...Object.getOwnPropertyNames(Object.getPrototypeOf(this))
-                ].filter(property => Boolean(Reflect.getMetadata(selectionBinding, this, property)));
+                ].filter(property => Boolean(Reflect.getMetadata(symbols_1.selectionBinding, this, property)));
                 boundProperties.forEach(property => {
-                    const config = Reflect.getMetadata(selectionBinding, this, property);
-                    this[property] = config.selector(this[boundStore].getState());
+                    const config = Reflect.getMetadata(symbols_1.selectionBinding, this, property);
+                    this[property] = config.selector(this[symbols_1.boundStore].getState());
                 });
             }
         };
@@ -83,6 +85,6 @@ export const useStore = (options) => {
  *
  * @param selector  The selector function that should be called
  */
-export const bindSelector = (selector) => {
-    return Reflect.metadata(selectionBinding, { selector });
+exports.bindSelector = (selector) => {
+    return Reflect.metadata(symbols_1.selectionBinding, { selector });
 };

@@ -1,11 +1,7 @@
-import 'reflect-metadata';
-import { getStore, DEFAULT } from './binding';
-import { StoreLike } from './types';
-
-const selectionBinding = Symbol('selectionBinding');
-const updateStateBindings = Symbol('updateStateBindings');
-const unsubscribe = Symbol('unsubscribe');
-const boundStore = Symbol('boundStore');
+import "reflect-metadata";
+import { getStore, DEFAULT } from "./binding";
+import { StoreLike } from "./types";
+import { boundStore, updateStateBindings, unsubscribe, selectionBinding } from "./symbols";
 
 /**
  * Subscribe this component to the given store.
@@ -17,15 +13,9 @@ const boundStore = Symbol('boundStore');
  * - scope (optional)       The scope symbol under which the store can be found
  * - renderFn (optional)    The function that should be called to trigger rendering.
  */
-export const useStore = <S>(options?: {
-  store?: StoreLike<S>;
-  scope?: Symbol;
-  renderFn?: (me: UnknownInstanceType) => void;
-}) => {
+export const useStore = <S>(options?: StoreBindingOptions<S>) => {
   const validOptions = options || {};
-  return function classDecorator<T extends { new (...args: any[]): {} }>(
-    constructor: T
-  ) {
+  return function classDecorator<T extends { new (...args: any[]): {} }>(constructor: T) {
     return class extends constructor {
       public [unsubscribe]: UnsubscribeFunction = () => {};
       public [boundStore]: StoreLike<S>;
@@ -47,7 +37,7 @@ export const useStore = <S>(options?: {
           this[boundStore] = getStore(DEFAULT) || this[boundStore];
         }
         if (!this[boundStore]) {
-          console.log('No store bound, ignoring annotations');
+          console.log("No store bound, ignoring annotations");
           return;
         }
         this[updateStateBindings]();
@@ -77,16 +67,16 @@ export const useStore = <S>(options?: {
        * Update the bound properties and reselect the state.
        */
       public [updateStateBindings]() {
-        const boundProperties = Object.getOwnPropertyNames(
-          this
-        ).filter(property =>
-          Boolean(Reflect.getMetadata(selectionBinding, this, property))
-        );
+        if (!this[boundStore]) {
+          return;
+        }
+        const boundProperties = [
+          ...Object.getOwnPropertyNames(this),
+          ...Object.getOwnPropertyNames(Object.getPrototypeOf(this))
+        ].filter(property => Boolean(Reflect.getMetadata(selectionBinding, this, property)));
         boundProperties.forEach(property => {
           const config = Reflect.getMetadata(selectionBinding, this, property);
-          (this as Record<string, any>)[property] = config.selector(
-            this[boundStore].getState()
-          );
+          (this as Record<string, any>)[property] = config.selector(this[boundStore].getState());
         });
       }
     };
@@ -101,6 +91,12 @@ export const useStore = <S>(options?: {
 export const bindSelector = <S, R>(selector: (state: S) => R) => {
   return Reflect.metadata(selectionBinding, { selector });
 };
+
+export interface StoreBindingOptions<S> {
+  store?: StoreLike<S>;
+  scope?: Symbol;
+  renderFn?: (me: UnknownInstanceType) => void;
+}
 
 type UnsubscribeFunction = () => void;
 type UnknownInstanceType = any;

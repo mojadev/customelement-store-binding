@@ -10,6 +10,7 @@ Minimal boilerplate redux-ish store bindings for web components with the followi
 - Test-friendly without forcing an approach to the user
 - Scopes: No direct binding to the store and support for multiple stores (if you want that)
 - Minimal footprint and dependencies
+- Support for vanilla web-components, lit-element and stencil (more coming)
 
 ## tl;dr
 
@@ -17,7 +18,7 @@ A simple WebComponent using this library (and lit-Element, which is not required
 
 ```typescript
 // this is LitElement, which is not required, but makes the example less verbose
-@customElement('todo-count')
+@customElement("todo-count")
 // This registers the default store
 @useStore({ renderFn: LIT_ELEMENT })
 export class TodoCountComponent extends LitElement {
@@ -52,7 +53,7 @@ npm install webcomponent-store-binding
 In most cases setup is done like this:
 
 ```typescript
-import { registerDefaultStore } from 'webcomponent-store-binding';
+import { registerDefaultStore } from "webcomponent-store-binding";
 
 const store = // however you setup your store
   // Register the store as the default
@@ -83,17 +84,19 @@ customElements.define('my-component', MyComponent);:W
 
 ```
 
+For Stencil, see the [Stencil Example](./examples/todo-stencil) for how to setup (Stencil does not support decorators for classes).
+
 ### 4. Dispatch actions
 
 Actions can be dispatched by talking directly to the store, but this couples the web component to the redux implementation. The preferred approach in DOM enabled environments is to use DOM Events and the `storeAction()` function that wraps elements in a CustomEvent which will be forwarded to the store
 
 ```typescript
-import { storeAction } from 'webcomponent-store-binding';
+import { storeAction } from "webcomponent-store-binding";
 
 class MyComponent extends HTMLElement {
   private triggerStuff() {
     // normally this will be defined in a central place, but let's keep it simple
-    const action = { type: 'triggerAction' };
+    const action = { type: "triggerAction" };
     this.dispatchEvent(storeAction(action));
   }
 }
@@ -123,11 +126,11 @@ afterEach(() => {
   resetStoreRegistry();
 });
 
-it('should display all todos from the store is updated', async () => {
+it("should display all todos from the store is updated", async () => {
   const root = (await createElement()).shadowRoot as ShadowRoot;
-  store.updateState({ todos: [{ id: '1234', title: 'hello', done: false }] });
+  store.updateState({ todos: [{ id: "1234", title: "hello", done: false }] });
 
-  expect(root?.querySelectorAll('li').length).toBe(1);
+  expect(root?.querySelectorAll("li").length).toBe(1);
 });
 ```
 
@@ -145,17 +148,15 @@ afterEach(() => {
   resetStoreRegistry();
 });
 
-it('should add a todo when entering a text and clicking on add', async () => {
-  const expectedText = 'New Todo';
+it("should add a todo when entering a text and clicking on add", async () => {
+  const expectedText = "New Todo";
   const root = (await createElement()).shadowRoot as ShadowRoot;
 
   enterTodoText(root, expectedText);
   clickAddButton(root);
   await tick();
 
-  const todoItems = root?.querySelectorAll('li > span') as NodeListOf<
-    HTMLSpanElement
-  >;
+  const todoItems = root?.querySelectorAll("li > span") as NodeListOf<HTMLSpanElement>;
   expect(todoItems.length).toBe(1);
   expect(todoItems[0].innerText.trim()).toMatch(expectedText);
 });
@@ -163,7 +164,7 @@ it('should add a todo when entering a text and clicking on add', async () => {
 
 ## Open Topics
 
-- Improve/Enforce type-safety
+- Improve/Enforce type-safety better
 - Evaluate pure JavaScript Examples
 - Add more integration examples and connectors (Angular, React, Stencil)
 - Add more examples for non-redux stores (mobx, akita, etc.)

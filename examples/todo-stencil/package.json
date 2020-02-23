@@ -1,0 +1,27 @@
+{
+  "name": "todo-stencil",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Stencil Todo Example",
+  "scripts": {
+    "build": "stencil build",
+    "start": "stencil build --dev --watch --serve",
+    "test": "stencil test --spec --e2e",
+    "test.watch": "stencil test --spec --e2e --watchAll",
+    "generate": "stencil generate"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "@stencil/core": "^1.8.8",
+    "@stencil/router": "^1.0.1",
+    "@types/jest": "24.0.25",
+    "@types/puppeteer": "1.20.3",
+    "babel-plugin-transform-default-import": "^1.0.0",
+    "jest": "24.9.0",
+    "jest-cli": "24.9.0",
+    "puppeteer": "1.20.0",
+    "customelement-store-binding": "^0.3.0"
+  },
+  "license": "MIT"
+}

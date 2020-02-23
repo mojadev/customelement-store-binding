@@ -1,4 +1,4 @@
-import { useStore, LIT_ELEMENT, bindSelector, storeAction } from "customelement-store-binding";
+import { LIT_ELEMENT, bindSelector, storeAction, useStore } from "customelement-store-binding";
 import { customElement, LitElement, html, property } from "lit-element";
 import { AppRootState, addTodo, finishTodo } from "./reducer";
 import { TodoItem } from "./types";
