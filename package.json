@@ -1,6 +1,6 @@
 {
   "name": "customelement-store-binding",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Connect redux-ish stores to your web components (however you write them) without effort or tight coupling",
   "main": "dist/cjs/index.js",
   "module": "dist/index.js",
@@ -16,8 +16,12 @@
     "redux",
     "store",
     "typescript",
+    "customelements",
     "custom elements",
     "library",
+    "web components",
+    "stencil",
+    "lit-element",
     "connect"
   ],
   "license": "MIT",

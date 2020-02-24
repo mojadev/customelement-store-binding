@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/mojadev/customelement-store-binding.svg?branch=master)](https://travis-ci.org/mojadev/customelement-store-binding)
 
-# Customelement Store-Binding
+# Customelements Store Binding
 
 ## About
 

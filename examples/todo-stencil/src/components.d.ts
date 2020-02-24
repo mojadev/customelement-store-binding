@@ -46,7 +46,7 @@ declare namespace LocalJSX {
   interface AppRoot {}
   interface TodoCount {}
   interface TodoList {
-    'onDispatchAction'?: (event: CustomEvent<any>) => void;
+    'onDispatchStoreAction'?: (event: CustomEvent<any>) => void;
   }
 
   interface IntrinsicElements {

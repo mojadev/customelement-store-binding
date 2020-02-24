@@ -1,5 +1,5 @@
 import { Component, h, Event, EventEmitter, State } from "@stencil/core";
-import { useStoreFor, bindSelector, GLOBAL_EVENT_NAME } from "customelement-store-binding";
+import { useStoreFor, bindSelector } from "customelement-store-binding";
 import { finishTodo, addTodo } from "../reducer";
 import { TodoItem, AppRootState } from "../types";
 
@@ -7,7 +7,7 @@ import { TodoItem, AppRootState } from "../types";
   tag: "todo-list"
 })
 export class TodoList {
-  @Event({ eventName: GLOBAL_EVENT_NAME, bubbles: true, composed: true })
+  @Event({ eventName: "dispatchStoreAction", bubbles: true, composed: true })
   private dispatchAction: EventEmitter;
 
   @State()
