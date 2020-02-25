@@ -1,6 +1,6 @@
 <nav class="navigation-top">
   <a href="../">:mega: Overview</a>
-  <a href="./">:running: Getting Started</a>
+  <a href="../getting-started">:running: Getting Started</a>
   <a href="../reference">:notebook: Reference</a>
 </nav>
 
