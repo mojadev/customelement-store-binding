@@ -1,10 +1,10 @@
 [![Build Status](https://travis-ci.org/mojadev/customelement-store-binding.svg?branch=master)](https://travis-ci.org/mojadev/customelement-store-binding)
 
 <nav class="navigation-top">
-  <a href="/">:mega: Overview</a>
-  <a href="/getting-started">:running: Getting Started</a>
-  <a href="/reference">:notebook: Reference</a>
-</nav>
+  [:mega: Overview](REaDME.md)
+  [:running: Getting Started](getting-started.md)
+  [:notebook: Reference](reference.md)
+</nav>:w
 
 # Customelements Store Binding
 
