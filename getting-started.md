@@ -129,7 +129,6 @@ export class MyComponent {
     // this does the same like the @useStore decorator
     useStoreFor(this);
   }
-  v;
 }
 ```
 
