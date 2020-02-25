@@ -1,10 +1,10 @@
 [![Build Status](https://travis-ci.org/mojadev/customelement-store-binding.svg?branch=master)](https://travis-ci.org/mojadev/customelement-store-binding)
 
 <nav class="navigation-top">
-  [:mega: Overview](REaDME.md)
-  [:running: Getting Started](getting-started.md)
-  [:notebook: Reference](reference.md)
-</nav>:w
+  <a href="./">:mega: Overview</a>
+  <a href="./getting-started">:running: Getting Started</a>
+  <a href="./reference">:notebook: Reference</a>
+</nav>
 
 # Customelements Store Binding
 
@@ -51,7 +51,7 @@ export class TodoCountComponent extends LitElement {
 ### 1. Installation
 
 ```
-npm install customelement-store-binding
+npm install webcomponent-store-binding
 ```
 
 ### 2. Register your store
@@ -59,7 +59,7 @@ npm install customelement-store-binding
 In most cases setup is done like this:
 
 ```typescript
-import { registerDefaultStore } from 'customelement-store-binding';
+import { registerDefaultStore } from 'webcomponent-store-binding';
 
 const store = // however you setup your store
   // Register the store as the default
@@ -69,7 +69,7 @@ const store = // however you setup your store
 ### 3. Bind your components to the scope
 
 ```typescript
-import {useStore, bindSelector} from 'customelement-store-binding';
+import {useStore, bindSelector} from 'webcomponent-store-binding';
 
 // This enables redux support for this component using the default store
 // You can use a custom render function that should be triggered on state changes using renderFn.
@@ -97,7 +97,7 @@ For Stencil, see the [Stencil Example](./examples/todo-stencil) for how to setup
 Actions can be dispatched by talking directly to the store, but this couples the web component to the redux implementation. The preferred approach in DOM enabled environments is to use DOM Events and the `storeAction()` function that wraps elements in a CustomEvent which will be forwarded to the store
 
 ```typescript
-import { storeAction } from 'customelement-store-binding';
+import { storeAction } from 'webcomponent-store-binding';
 
 class MyComponent extends HTMLElement {
   private triggerStuff() {
