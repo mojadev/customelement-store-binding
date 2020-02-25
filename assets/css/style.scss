@@ -1,0 +1,12 @@
+---
+---
+
+@import '{{ site.theme }}';
+
+.navigation-top {
+  display: flex;
+}
+
+.navigation-top a {
+  flex: 1;
+}

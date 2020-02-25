@@ -1,5 +1,11 @@
 [![Build Status](https://travis-ci.org/mojadev/customelement-store-binding.svg?branch=master)](https://travis-ci.org/mojadev/customelement-store-binding)
 
+<nav class="navigation-top">
+  <a href="/">:mega: Overview</a>
+  <a href="/getting-started">:running: Getting Started</a>
+  <a href="/reference">:notebook: Reference</a>
+</nav>
+
 # Customelements Store Binding
 
 ## About
@@ -18,7 +24,7 @@ A simple WebComponent using this library (and lit-Element, which is not required
 
 ```typescript
 // this is LitElement, which is not required, but makes the example less verbose
-@customElement("todo-count")
+@customElement('todo-count')
 // This registers the default store
 @useStore({ renderFn: LIT_ELEMENT })
 export class TodoCountComponent extends LitElement {
@@ -45,7 +51,7 @@ export class TodoCountComponent extends LitElement {
 ### 1. Installation
 
 ```
-npm install webcomponent-store-binding
+npm install customelement-store-binding
 ```
 
 ### 2. Register your store
@@ -53,7 +59,7 @@ npm install webcomponent-store-binding
 In most cases setup is done like this:
 
 ```typescript
-import { registerDefaultStore } from "webcomponent-store-binding";
+import { registerDefaultStore } from 'customelement-store-binding';
 
 const store = // however you setup your store
   // Register the store as the default
@@ -63,7 +69,7 @@ const store = // however you setup your store
 ### 3. Bind your components to the scope
 
 ```typescript
-import {useStore, bindSelector} from 'webcomponent-store-binding';
+import {useStore, bindSelector} from 'customelement-store-binding';
 
 // This enables redux support for this component using the default store
 // You can use a custom render function that should be triggered on state changes using renderFn.
@@ -91,12 +97,12 @@ For Stencil, see the [Stencil Example](./examples/todo-stencil) for how to setup
 Actions can be dispatched by talking directly to the store, but this couples the web component to the redux implementation. The preferred approach in DOM enabled environments is to use DOM Events and the `storeAction()` function that wraps elements in a CustomEvent which will be forwarded to the store
 
 ```typescript
-import { storeAction } from "webcomponent-store-binding";
+import { storeAction } from 'customelement-store-binding';
 
 class MyComponent extends HTMLElement {
   private triggerStuff() {
     // normally this will be defined in a central place, but let's keep it simple
-    const action = { type: "triggerAction" };
+    const action = { type: 'triggerAction' };
     this.dispatchEvent(storeAction(action));
   }
 }
@@ -126,11 +132,11 @@ afterEach(() => {
   resetStoreRegistry();
 });
 
-it("should display all todos from the store is updated", async () => {
+it('should display all todos from the store is updated', async () => {
   const root = (await createElement()).shadowRoot as ShadowRoot;
-  store.updateState({ todos: [{ id: "1234", title: "hello", done: false }] });
+  store.updateState({ todos: [{ id: '1234', title: 'hello', done: false }] });
 
-  expect(root?.querySelectorAll("li").length).toBe(1);
+  expect(root?.querySelectorAll('li').length).toBe(1);
 });
 ```
 
@@ -148,15 +154,17 @@ afterEach(() => {
   resetStoreRegistry();
 });
 
-it("should add a todo when entering a text and clicking on add", async () => {
-  const expectedText = "New Todo";
+it('should add a todo when entering a text and clicking on add', async () => {
+  const expectedText = 'New Todo';
   const root = (await createElement()).shadowRoot as ShadowRoot;
 
   enterTodoText(root, expectedText);
   clickAddButton(root);
   await tick();
 
-  const todoItems = root?.querySelectorAll("li > span") as NodeListOf<HTMLSpanElement>;
+  const todoItems = root?.querySelectorAll('li > span') as NodeListOf<
+    HTMLSpanElement
+  >;
   expect(todoItems.length).toBe(1);
   expect(todoItems[0].innerText.trim()).toMatch(expectedText);
 });
