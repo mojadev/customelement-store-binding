@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/mojadev/customelement-store-binding.svg?branch=master)](https://travis-ci.org/mojadev/customelement-store-binding)
 
 <nav class="navigation-top">
-  <a href="./">:mega: Overview</a>
+  <a href="./readme">:mega: Overview</a>
   <a href="./getting-started">:running: Getting Started</a>
   <a href="./reference">:notebook: Reference</a>
 </nav>
