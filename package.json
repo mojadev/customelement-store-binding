@@ -1,6 +1,6 @@
 {
   "name": "customelement-store-binding",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Connect redux-ish stores to your web components (however you write them) without effort or tight coupling",
   "main": "dist/cjs/index.js",
   "module": "dist/index.js",
@@ -11,6 +11,7 @@
   },
   "author": "Jannis Mosshammer <mojadev@gmail.com>",
   "types": "./dist/index.d.ts",
+  "homepage": "https://github.com/mojadev/customelement-store-binding",
   "keywords": [
     "web-components",
     "redux",
