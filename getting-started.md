@@ -177,7 +177,7 @@ import { addTodo } from "./store/actions";
 
 ### Stencil events
 
-Stencil doesn't allow constants in the `@Event` decorator right now (see https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events). So until a different solution is found here, you need to use the event name from this library inside an event emitter (stencil does not extend from HTMLElement).
+Stencil doesn't allow constants in the `@Event` decorator right now ([MDN](https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events)). So until a different solution is found here, you need to use the event name from this library inside an event emitter (stencil does not extend from HTMLElement).
 
 ```ts
 @Event({ eventName: "dispatchStoreAction", bubbles: true, composed: true })
