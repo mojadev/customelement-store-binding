@@ -81,7 +81,11 @@ export const useStore = <S>(options?: StoreBindingOptions<S>) => {
         dispatcherProperties.forEach(({ fn, scope }: { fn: string; scope: symbol }) => {
           const htmlElement = this as any;
           htmlElement[fn] = (action: AnyAction) => {
-            getStore(scope)!.dispatch(action);
+            if (getStore(scope)) {
+              getStore(scope)!.dispatch(action);
+            } else {
+              (this as any).dispatchEvent(storeAction(action, scope));
+            }
           };
         });
       }

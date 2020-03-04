@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { getStore, DEFAULT } from "./binding";
 import { boundStore, updateStateBindings, unsubscribe, selectionBinding, dispatcherDecorator, setupDispatcher } from "./symbols";
+import { storeAction } from "./integrations";
 /**
  * Subscribe this component to the given store.
  *
@@ -74,7 +75,12 @@ export const useStore = (options) => {
                 dispatcherProperties.forEach(({ fn, scope }) => {
                     const htmlElement = this;
                     htmlElement[fn] = (action) => {
-                        getStore(scope).dispatch(action);
+                        if (getStore(scope)) {
+                            getStore(scope).dispatch(action);
+                        }
+                        else {
+                            this.dispatchEvent(storeAction(action, scope));
+                        }
                     };
                 });
             }

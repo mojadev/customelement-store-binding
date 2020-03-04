@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 const binding_1 = require("./binding");
 const symbols_1 = require("./symbols");
+const integrations_1 = require("./integrations");
 /**
  * Subscribe this component to the given store.
  *
@@ -76,7 +77,12 @@ exports.useStore = (options) => {
                 dispatcherProperties.forEach(({ fn, scope }) => {
                     const htmlElement = this;
                     htmlElement[fn] = (action) => {
-                        binding_1.getStore(scope).dispatch(action);
+                        if (binding_1.getStore(scope)) {
+                            binding_1.getStore(scope).dispatch(action);
+                        }
+                        else {
+                            this.dispatchEvent(integrations_1.storeAction(action, scope));
+                        }
                     };
                 });
             }

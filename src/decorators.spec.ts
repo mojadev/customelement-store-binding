@@ -131,7 +131,7 @@ describe("decorators test", () => {
       document.dispatchEvent(storeAction({ type: "accepted" }, scope));
 
       expect(store.dispatch).toHaveBeenCalledTimes(1);
-      expect(store.dispatch).toHaveBeenCalledWith({ type: "accepted", scope });
+      expect(store.dispatch).toHaveBeenCalledWith({ type: "accepted" });
     });
 
     // Planned for future release if needed
