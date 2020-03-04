@@ -60,11 +60,9 @@ describe("App component test", () => {
       components: [TodoList],
       html: "<todo-list></todo-list>"
     });
-
     // It's important to do this before awaiting the specPage
     store = configureStore({ reducer });
     registerDefaultStore(store);
-
     return await specPage;
   }
 

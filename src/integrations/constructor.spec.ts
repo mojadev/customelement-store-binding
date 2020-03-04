@@ -1,16 +1,24 @@
 import { useStoreFor } from "./constructor";
-import { bindSelector } from "../decorators";
+import { bindSelector, dispatcher } from "../decorators";
 import { registerDefaultStore, resetStoreRegistry } from "../binding";
 import { MockStore } from "../testing";
+import { AnyAction } from "../types";
 
 class StencilComponentMock {
   @bindSelector<TestState, string>(x => x.value)
   public value: string = "not set";
 
+  @dispatcher()
+  public dispatcher!: (action: AnyAction) => void;
+
   public disconnectSpy = jasmine.createSpy("disconnectSpy");
 
   constructor() {
     useStoreFor(this);
+  }
+
+  dispatchEvent(ev: Event) {
+    document.dispatchEvent(ev);
   }
 
   disconnectedCallback = this.disconnectSpy;
@@ -48,6 +56,14 @@ describe("Stencil Integration", () => {
 
     expect(component.disconnectSpy).toHaveBeenCalled();
     expect(store.subscriber.length).toBe(0);
+  });
+
+  it("should dispatch an event when the dispatcher is called", () => {
+    const component = new StencilComponentMock();
+
+    component.dispatcher({ type: "test" });
+
+    expect(store.dispatched.length).toBe(1);
   });
 });
 

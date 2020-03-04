@@ -1,4 +1,4 @@
-import { StoreLike } from './types';
+import { StoreLike } from "./types";
 export declare const DEFAULT: unique symbol;
 /**
  * Register the given Redux StoreLike as the default store that will be used in @useStore decorators by default.

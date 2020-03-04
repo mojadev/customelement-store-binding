@@ -23,5 +23,8 @@
     "puppeteer": "1.20.0",
     "customelement-store-binding": "^0.3.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "rollup-plugin-node-polyfills": "^0.2.1"
+  }
 }

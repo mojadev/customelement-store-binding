@@ -6,5 +6,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./dom"));
 __export(require("./lit-element"));
 __export(require("./constructor"));
-__export(require("./stencil"));
 __export(require("./symbols"));

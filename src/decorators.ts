@@ -1,7 +1,9 @@
 import "reflect-metadata";
 import { getStore, DEFAULT } from "./binding";
 import { StoreLike } from "./types";
-import { boundStore, updateStateBindings, unsubscribe, selectionBinding } from "./symbols";
+import { boundStore, updateStateBindings, unsubscribe, selectionBinding, dispatcherDecorator, setupDispatcher } from "./symbols";
+import { AnyAction } from "redux";
+import { storeAction } from "./integrations";
 
 /**
  * Subscribe this component to the given store.
@@ -28,6 +30,8 @@ export const useStore = <S>(options?: StoreBindingOptions<S>) => {
        */
       constructor(...args: any[]) {
         super(args);
+
+        this[setupDispatcher]();
 
         if (validOptions.scope) {
           this[boundStore] = getStore(validOptions.scope) || this[boundStore];
@@ -64,19 +68,36 @@ export const useStore = <S>(options?: StoreBindingOptions<S>) => {
       }
 
       /**
-       * Update the bound properties and reselect the state.
+       * Setup dispatcher functions.
+       *
+       * Harry, you're a magician: This creates and overwrites methods without the control of the user and
+       * should therefore be considered magic. That's why it's better to use HTMLElement.dispatchEvent, but
+       * for environments like stencil there is no HTMLElement available or derived in the component.
+       *
+       * @param parentClass The class from which to look for metadata. Overwritten mainly for stencil support
        */
-      public [updateStateBindings]() {
+      public [setupDispatcher](parentClass = constructor.prototype) {
+        const dispatcherProperties = Reflect.getMetadata(dispatcherDecorator, parentClass) || [];
+        dispatcherProperties.forEach(({ fn, scope }: { fn: string; scope: symbol }) => {
+          const htmlElement = this as any;
+          htmlElement[fn] = (action: AnyAction) => {
+            getStore(scope)!.dispatch(action);
+          };
+        });
+      }
+
+      /**
+       * Update the store bindings using the registered selector for all bindings in this class.
+       *
+       * @param parentClass The class from which to look for metadata. Overwritten mainly for stencil support
+       */
+      public [updateStateBindings](parentClass = constructor.prototype) {
         if (!this[boundStore]) {
           return;
         }
-        const boundProperties = [
-          ...Object.getOwnPropertyNames(this),
-          ...Object.getOwnPropertyNames(Object.getPrototypeOf(this))
-        ].filter(property => Boolean(Reflect.getMetadata(selectionBinding, this, property)));
-        boundProperties.forEach(property => {
-          const config = Reflect.getMetadata(selectionBinding, this, property);
-          (this as Record<string, any>)[property] = config.selector(this[boundStore].getState());
+        const config = Reflect.getMetadata(selectionBinding, parentClass) || [];
+        config.forEach((binding: { property: string; selector: any }) => {
+          (this as Record<string, any>)[binding.property] = binding.selector(this[boundStore].getState());
         });
       }
     };
@@ -84,12 +105,29 @@ export const useStore = <S>(options?: StoreBindingOptions<S>) => {
 };
 
 /**
+ * Use this property as a dispatcher that allows submtiting DOM Events.
+ *
+ * You should only need this for Stencil - in normal HTMLElement derived classes you
+ * should simply use this.dipsatchEvent(storeAction(myACtion))
+ *
+ * @param scope The scope to use, if given not DEFAULT is set
+ */
+export const dispatcher = (scope = DEFAULT) => {
+  return function(target: any, propertyKey: string) {
+    const keys = Reflect.getMetadata(dispatcherDecorator, target) || [];
+    Reflect.defineMetadata(dispatcherDecorator, [...keys, { fn: propertyKey, scope }], target);
+  };
+};
+/**
  * Bind the attribute value to the given selector, so it will be updated on store updates.
  *
  * @param selector  The selector function that should be called
  */
 export const bindSelector = <S, R>(selector: (state: S) => R) => {
-  return Reflect.metadata(selectionBinding, { selector });
+  return function(target: any, propertyKey: string) {
+    const keys = Reflect.getMetadata(selectionBinding, target) || [];
+    Reflect.defineMetadata(selectionBinding, [...keys, { property: propertyKey, selector }], target);
+  };
 };
 
 export interface StoreBindingOptions<S> {

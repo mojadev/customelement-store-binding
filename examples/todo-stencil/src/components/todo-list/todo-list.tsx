@@ -1,14 +1,19 @@
-import { Component, h, Event, EventEmitter, State } from "@stencil/core";
-import { useStoreFor, bindSelector } from "customelement-store-binding";
+import { Component, h, State } from "@stencil/core";
+import { useStoreFor, bindSelector, dispatcher } from "customelement-store-binding";
 import { finishTodo, addTodo } from "../reducer";
 import { TodoItem, AppRootState } from "../types";
+import { ActionDispatcher } from "../../../../../dist/types";
 
 @Component({
   tag: "todo-list"
 })
 export class TodoList {
-  @Event({ eventName: "dispatchStoreAction", bubbles: true, composed: true })
-  private dispatchAction: EventEmitter;
+  /**
+   * The dispatcher annotation is used here instead of dispatchEvent as TodoList
+   * does not derive from HTMLElement in stencil.
+   */
+  @dispatcher()
+  private dispatchAction: ActionDispatcher;
 
   @State()
   @bindSelector((x: AppRootState) => x.todos)
@@ -28,7 +33,7 @@ export class TodoList {
    */
   private finishTodo(todoId: string) {
     const action = finishTodo(todoId);
-    this.dispatchAction.emit(action);
+    this.dispatchAction(action);
   }
 
   /**
@@ -38,7 +43,7 @@ export class TodoList {
    */
   private addTodo(title: string) {
     const action = addTodo({ title });
-    this.dispatchAction.emit(action);
+    this.dispatchAction(action);
     this.currentTitle = "";
   }
 

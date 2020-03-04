@@ -8,3 +8,7 @@ export interface AnyAction {
     [key: string]: any;
 }
 export declare type UnsubscribeFunction = () => void;
+/**
+ * Action Dispatcher function prototype.
+ */
+export declare type ActionDispatcher = (action: AnyAction) => void;

@@ -1,5 +1,6 @@
 import { StoreLike, AnyAction } from "../types";
 import { GLOBAL_EVENT_NAME } from "./symbols";
+import { DEFAULT } from "../binding";
 
 const eventListeners: EventListener[] = [];
 
@@ -12,11 +13,11 @@ const eventListeners: EventListener[] = [];
  *
  * @param action Any action that should be dispatched
  */
-export const storeAction = <T>(action: AnyAction) => {
+export const storeAction = (action: AnyAction, scope = DEFAULT) => {
   return new CustomEvent<AnyAction>(GLOBAL_EVENT_NAME, {
     composed: true,
     bubbles: true,
-    detail: action
+    detail: { ...action, scope }
   });
 };
 
@@ -25,14 +26,17 @@ export const storeAction = <T>(action: AnyAction) => {
  *
  * @param store The store that should be updated on DOM events
  */
-export const enableDomEventForStore = <S>(store: StoreLike<S>) => {
+export const enableDomEventForStore = <S>(store: StoreLike<S>, scope: Symbol) => {
   if (typeof document === "undefined") {
     return;
   }
   eventListeners.push((evt: Event) => {
-    store.dispatch((evt as CustomEvent<AnyAction>).detail);
+    const action: AnyAction = (evt as CustomEvent<AnyAction>).detail;
+    if (!action.scope || action.scope === scope) {
+      store.dispatch({ ...action, scope: undefined });
+    }
   });
-  document.addEventListener(GLOBAL_EVENT_NAME, eventListeners[eventListeners.length - 1]);
+  window.addEventListener(GLOBAL_EVENT_NAME, eventListeners[eventListeners.length - 1]);
 };
 
 /**
@@ -42,5 +46,5 @@ export const clearDomEventsForStores = () => {
   if (typeof document === "undefined") {
     return;
   }
-  eventListeners.forEach(eventListener => document.removeEventListener(GLOBAL_EVENT_NAME, eventListener));
+  eventListeners.forEach(eventListener => window.removeEventListener(GLOBAL_EVENT_NAME, eventListener));
 };

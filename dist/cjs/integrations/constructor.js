@@ -21,10 +21,15 @@ exports.useStoreFor = (instance, options) => {
         decorators_1.useStore(options)
     ], ProxyClass);
     const proxy = new ProxyClass();
-    proxy[symbols_1.updateStateBindings] = proxy[symbols_1.updateStateBindings].bind(instance);
     instance[symbols_1.boundStore] = proxy[symbols_1.boundStore];
+    // We use the updateStateBindings function from the proxy and wire it to the actual class
+    // Whats happening here is the proxy reacting to store changes and calling [updateStateBindings]
+    // but this effectively happens for the proxied instance
+    instance[symbols_1.updateStateBindings] = proxy[symbols_1.updateStateBindings].bind(instance);
+    proxy[symbols_1.updateStateBindings] = () => instance[symbols_1.updateStateBindings].call(instance, instance);
+    proxy[symbols_1.setupDispatcher].call(instance, instance);
     if (proxy[symbols_1.boundStore]) {
-        proxy[symbols_1.updateStateBindings]();
+        instance[symbols_1.updateStateBindings](instance);
     }
     forwardDisconnectedCallback(instance, proxy);
 };

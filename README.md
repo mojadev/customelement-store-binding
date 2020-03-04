@@ -106,6 +106,21 @@ class MyComponent extends HTMLElement {
 
 Notice that you do not need any decorators for dispatching actions. DOM Events ftw!
 
+#### Stencil
+
+For libraries like stencil, which do not extend `HTMLElement`, the `@dispatch` annotation can be used:
+
+```typescript
+  @dispatcher()
+  private dispatchAction: ActionDispatcher;
+
+  private finishTodo(todoId: string) {
+    const action = finishTodo(todoId);
+    this.dispatchAction(action);
+  }
+
+```
+
 ## Testing
 
 Testing is quite easy and can be done either in a unit-test like way or in a more integrative way. The first approach is using the provided MockStore and provides state changes directly by setting the state, while actions are only observed. the latter approach creates an actual redux store and tests your component against this store, focusing on the real behaviour while sacrifying stricter test boundaries.
@@ -168,5 +183,5 @@ it("should add a todo when entering a text and clicking on add", async () => {
 
 - Improve/Enforce type-safety better
 - Evaluate pure JavaScript Examples
-- Add more integration examples and connectors (Angular, React, Stencil)
+- Add more integration examples and connectors (Angular, React)
 - Add more examples for non-redux stores (mobx, akita, etc.)

@@ -10,3 +10,8 @@ export interface AnyAction {
 }
 
 export type UnsubscribeFunction = () => void;
+
+/**
+ * Action Dispatcher function prototype.
+ */
+export type ActionDispatcher = (action: AnyAction) => void;

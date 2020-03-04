@@ -45,9 +45,7 @@ declare global {
 declare namespace LocalJSX {
   interface AppRoot {}
   interface TodoCount {}
-  interface TodoList {
-    'onDispatchStoreAction'?: (event: CustomEvent<any>) => void;
-  }
+  interface TodoList {}
 
   interface IntrinsicElements {
     'app-root': AppRoot;

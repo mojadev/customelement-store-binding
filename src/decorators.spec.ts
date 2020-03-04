@@ -1,19 +1,28 @@
-import { useStore, bindSelector } from "./decorators";
-import { Store } from "redux";
-import { resetStoreRegistry, registerStore } from "./binding";
+import { useStore, bindSelector, dispatcher } from "./decorators";
+import { Store, AnyAction, Action } from "redux";
+import { resetStoreRegistry, registerStore, DEFAULT } from "./binding";
+import { storeAction } from "./integrations";
 
 let getState = jasmine.createSpy("getState");
 let subscribe = jasmine.createSpy("subscribe");
+let dispatch = jasmine.createSpy("dispatch");
 
-const store = { getState, subscribe } as StoreMock;
+const store = { getState, subscribe, dispatch } as StoreMock;
 
 @useStore({ store, renderFn: (el: TestClass) => el.render() })
 class TestClass {
   @bindSelector<State, string>(x => x.test)
   test: string = "";
 
+  @dispatcher()
+  private dispatch!: (action: AnyAction) => void;
+
   public cleanUpCall = jasmine.createSpy("cleanupCall");
   public render = jasmine.createSpy("render");
+
+  dispatchAction(action: AnyAction) {
+    this.dispatch(action);
+  }
 
   disconnectedCallback() {
     // this is overwritten to test the cleanup being called together with unsubscribing
@@ -32,9 +41,10 @@ describe("decorators test", () => {
       return unsubscribeCallback;
     });
     store.getState = jasmine.createSpy("getState");
+    store.dispatch = jasmine.createSpy("dispatch");
   });
 
-  it("should register at a store using the @useRedux operator", () => {
+  it("should register at a store using the @useStore decorator", () => {
     store.getState.and.returnValue({ test: "testValue" });
 
     const htmlElement = new TestClass();
@@ -80,6 +90,19 @@ describe("decorators test", () => {
     expect(htmlElement.render).toHaveBeenCalledTimes(1);
   });
 
+  it("should dispatch an action when a @dispatcher function is called", () => {
+    store.getState.and.returnValue({ test: "updatedValue" });
+    const htmlElement: CustomHTMLElement = new TestClass();
+
+    htmlElement.dispatchEvent = jasmine.createSpy("dispatchEvent");
+    htmlElement.dispatchAction({ type: "action" });
+
+    const spy = htmlElement.dispatchEvent as jasmine.Spy;
+
+    expect(spy).toHaveBeenCalled();
+    expect(spy.calls.mostRecent().args[0].detail).toEqual({ type: "action", scope: DEFAULT });
+  });
+
   describe("with scope store reference", () => {
     const scope = Symbol("testScope");
 
@@ -98,6 +121,17 @@ describe("decorators test", () => {
       const htmlElement = new ScopedStoreRefClass();
 
       expect(htmlElement.boundValue).toBe("updatedValue");
+    });
+
+    it("should only react to events fired for the given scope", () => {
+      registerStore(scope, store);
+      store.getState.and.returnValue({ test: "updatedValue" });
+
+      document.dispatchEvent(storeAction({ type: "ignored" }));
+      document.dispatchEvent(storeAction({ type: "accepted" }, scope));
+
+      expect(store.dispatch).toHaveBeenCalledTimes(1);
+      expect(store.dispatch).toHaveBeenCalledWith({ type: "accepted", scope });
     });
 
     // Planned for future release if needed

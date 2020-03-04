@@ -27,6 +27,7 @@ exports.useStore = (options) => {
             constructor(...args) {
                 super(args);
                 this[_a] = () => { };
+                this[symbols_1.setupDispatcher]();
                 if (validOptions.scope) {
                     this[symbols_1.boundStore] = binding_1.getStore(validOptions.scope) || this[symbols_1.boundStore];
                 }
@@ -62,22 +63,52 @@ exports.useStore = (options) => {
                 }
             }
             /**
-             * Update the bound properties and reselect the state.
+             * Setup dispatcher functions.
+             *
+             * Harry, you're a magician: This creates and overwrites methods without the control of the user and
+             * should therefore be considered magic. That's why it's better to use HTMLElement.dispatchEvent, but
+             * for environments like stencil there is no HTMLElement available or derived in the component.
+             *
+             * @param parentClass The class from which to look for metadata. Overwritten mainly for stencil support
              */
-            [(_a = symbols_1.unsubscribe, symbols_1.updateStateBindings)]() {
+            [(_a = symbols_1.unsubscribe, symbols_1.setupDispatcher)](parentClass = constructor.prototype) {
+                const dispatcherProperties = Reflect.getMetadata(symbols_1.dispatcherDecorator, parentClass) || [];
+                dispatcherProperties.forEach(({ fn, scope }) => {
+                    const htmlElement = this;
+                    htmlElement[fn] = (action) => {
+                        binding_1.getStore(scope).dispatch(action);
+                    };
+                });
+            }
+            /**
+             * Update the store bindings using the registered selector for all bindings in this class.
+             *
+             * @param parentClass The class from which to look for metadata. Overwritten mainly for stencil support
+             */
+            [symbols_1.updateStateBindings](parentClass = constructor.prototype) {
                 if (!this[symbols_1.boundStore]) {
                     return;
                 }
-                const boundProperties = [
-                    ...Object.getOwnPropertyNames(this),
-                    ...Object.getOwnPropertyNames(Object.getPrototypeOf(this))
-                ].filter(property => Boolean(Reflect.getMetadata(symbols_1.selectionBinding, this, property)));
-                boundProperties.forEach(property => {
-                    const config = Reflect.getMetadata(symbols_1.selectionBinding, this, property);
-                    this[property] = config.selector(this[symbols_1.boundStore].getState());
+                const config = Reflect.getMetadata(symbols_1.selectionBinding, parentClass) || [];
+                config.forEach((binding) => {
+                    this[binding.property] = binding.selector(this[symbols_1.boundStore].getState());
                 });
             }
         };
+    };
+};
+/**
+ * Use this property as a dispatcher that allows submtiting DOM Events.
+ *
+ * You should only need this for Stencil - in normal HTMLElement derived classes you
+ * should simply use this.dipsatchEvent(storeAction(myACtion))
+ *
+ * @param scope The scope to use, if given not DEFAULT is set
+ */
+exports.dispatcher = (scope = binding_1.DEFAULT) => {
+    return function (target, propertyKey) {
+        const keys = Reflect.getMetadata(symbols_1.dispatcherDecorator, target) || [];
+        Reflect.defineMetadata(symbols_1.dispatcherDecorator, [...keys, { fn: propertyKey, scope }], target);
     };
 };
 /**
@@ -86,5 +117,8 @@ exports.useStore = (options) => {
  * @param selector  The selector function that should be called
  */
 exports.bindSelector = (selector) => {
-    return Reflect.metadata(symbols_1.selectionBinding, { selector });
+    return function (target, propertyKey) {
+        const keys = Reflect.getMetadata(symbols_1.selectionBinding, target) || [];
+        Reflect.defineMetadata(symbols_1.selectionBinding, [...keys, { property: propertyKey, selector }], target);
+    };
 };

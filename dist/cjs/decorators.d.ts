@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { StoreLike } from "./types";
-import { boundStore, updateStateBindings, unsubscribe } from "./symbols";
+import { boundStore, updateStateBindings, unsubscribe, setupDispatcher } from "./symbols";
 /**
  * Subscribe this component to the given store.
  *
@@ -24,20 +24,38 @@ export declare const useStore: <S>(options?: StoreBindingOptions<S> | undefined)
         [unsubscribe]: UnsubscribeFunction;
         [boundStore]: StoreLike<S>;
         /**
-         * Update the bound properties and reselect the state.
+         * Setup dispatcher functions.
+         *
+         * Harry, you're a magician: This creates and overwrites methods without the control of the user and
+         * should therefore be considered magic. That's why it's better to use HTMLElement.dispatchEvent, but
+         * for environments like stencil there is no HTMLElement available or derived in the component.
+         *
+         * @param parentClass The class from which to look for metadata. Overwritten mainly for stencil support
          */
-        [updateStateBindings](): void;
+        [setupDispatcher](parentClass?: any): void;
+        /**
+         * Update the store bindings using the registered selector for all bindings in this class.
+         *
+         * @param parentClass The class from which to look for metadata. Overwritten mainly for stencil support
+         */
+        [updateStateBindings](parentClass?: any): void;
     };
 } & T;
+/**
+ * Use this property as a dispatcher that allows submtiting DOM Events.
+ *
+ * You should only need this for Stencil - in normal HTMLElement derived classes you
+ * should simply use this.dipsatchEvent(storeAction(myACtion))
+ *
+ * @param scope The scope to use, if given not DEFAULT is set
+ */
+export declare const dispatcher: (scope?: symbol) => (target: any, propertyKey: string) => void;
 /**
  * Bind the attribute value to the given selector, so it will be updated on store updates.
  *
  * @param selector  The selector function that should be called
  */
-export declare const bindSelector: <S, R>(selector: (state: S) => R) => {
-    (target: Function): void;
-    (target: Object, propertyKey: string | symbol): void;
-};
+export declare const bindSelector: <S, R>(selector: (state: S) => R) => (target: any, propertyKey: string) => void;
 export interface StoreBindingOptions<S> {
     store?: StoreLike<S>;
     scope?: Symbol;

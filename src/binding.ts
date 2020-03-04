@@ -1,20 +1,17 @@
-import {
-  enableDomEventForStore,
-  clearDomEventsForStores
-} from './integrations';
-import { StoreLike } from './types';
+import { enableDomEventForStore, clearDomEventsForStores } from "./integrations";
+import { StoreLike } from "./types";
 
-const globalThis = typeof window !== 'undefined' ? window : this;
+const globalThis = typeof window !== "undefined" ? window : this;
 
 let storeRegistry: Map<Symbol, StoreLike<any>>;
-if (Reflect.hasMetadata('storeScopeMap', globalThis)) {
-  storeRegistry = Reflect.getMetadata('storeScopeMap', globalThis);
+if (Reflect.hasMetadata("storeScopeMap", globalThis)) {
+  storeRegistry = Reflect.getMetadata("storeScopeMap", globalThis);
 } else {
   storeRegistry = new Map<Symbol, StoreLike<any>>();
-  Reflect.defineMetadata('storeScopeMap', storeRegistry, globalThis);
+  Reflect.defineMetadata("storeScopeMap", storeRegistry, globalThis);
 }
 
-export const DEFAULT = Symbol.for('reduxDefaultStoreLike');
+export const DEFAULT = Symbol.for("reduxDefaultStoreLike");
 /**
  * Register the given Redux StoreLike as the default store that will be used in @useStore decorators by default.
  *
@@ -32,7 +29,7 @@ export const registerDefaultStore = <S>(store: StoreLike<S>) => {
  */
 export const registerStore = <S>(scope: Symbol, store: StoreLike<S>) => {
   storeRegistry.set(scope, store);
-  enableDomEventForStore(store);
+  enableDomEventForStore(store, scope);
 };
 
 /**

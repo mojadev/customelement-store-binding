@@ -5,7 +5,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { useStore } from "../decorators";
-import { updateStateBindings, boundStore } from "../symbols";
+import { setupDispatcher, updateStateBindings, boundStore } from "../symbols";
 /**
  * Store registration function that works the same like the @useStore decorator, but
  * for libraries like stencil that don't support decorators.
@@ -19,10 +19,15 @@ export const useStoreFor = (instance, options) => {
         useStore(options)
     ], ProxyClass);
     const proxy = new ProxyClass();
-    proxy[updateStateBindings] = proxy[updateStateBindings].bind(instance);
     instance[boundStore] = proxy[boundStore];
+    // We use the updateStateBindings function from the proxy and wire it to the actual class
+    // Whats happening here is the proxy reacting to store changes and calling [updateStateBindings]
+    // but this effectively happens for the proxied instance
+    instance[updateStateBindings] = proxy[updateStateBindings].bind(instance);
+    proxy[updateStateBindings] = () => instance[updateStateBindings].call(instance, instance);
+    proxy[setupDispatcher].call(instance, instance);
     if (proxy[boundStore]) {
-        proxy[updateStateBindings]();
+        instance[updateStateBindings](instance);
     }
     forwardDisconnectedCallback(instance, proxy);
 };
