@@ -19,7 +19,7 @@
     "@babel/preset-typescript": "^7.8.3",
     "@types/uuid": "^3.4.7",
     "babel-preset-env": "^1.7.0",
-    "customelement-store-binding": "^0.3.0",
+    "customelement-store-binding": "^0.4.1",
     "html-webpack-plugin": "^3.2.0",
     "jasmine": "^3.5.0",
     "karma": "^4.4.1",

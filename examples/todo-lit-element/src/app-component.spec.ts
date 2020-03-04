@@ -1,4 +1,4 @@
-import { MockStore, registerDefaultStore, resetStoreRegistry } from "customelement-store-binding";
+import { MockStore, registerDefaultStore, resetStoreRegistry, DEFAULT } from "customelement-store-binding";
 
 import { AppRootState } from "./reducer";
 import { TodoListElement } from "./app-component";
@@ -45,7 +45,8 @@ describe("App component test", () => {
 
     expect(eventSpy.calls.mostRecent().args[0].detail).toEqual({
       type: "todo-store/addTodo",
-      payload: { title: expectedText }
+      payload: { title: expectedText },
+      scope: DEFAULT
     });
   });
 
@@ -66,7 +67,8 @@ describe("App component test", () => {
 
     expect(eventSpy.calls.mostRecent().args[0].detail).toEqual({
       type: "todo-store/finishTodo",
-      payload: "1234"
+      payload: "1234",
+      scope: DEFAULT
     });
   });
 
