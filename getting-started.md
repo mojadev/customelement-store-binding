@@ -72,7 +72,7 @@ with ./symbols.ts containing:
 
 ```ts
 // for unique symbols (no outside deployment will ever clash with this)
-export const storeScope = new Symbol('myStore');
+export const storeScope = Symbol('myStore');
 // for recretable symbols
 export const constantScope = Symbol.for('myStore');
 ```
@@ -164,7 +164,7 @@ In a DOM enabled environment, actions are dispatched using [CustomEvents](https:
 To wrap your action in a CustomEvent, the `storeAction` function can be used:
 
 ```ts
-import { storeAction} from "customelement-store-binding";
+import { storeAction } from "customelement-store-binding";
 import { addTodo } from "./store/actions";
 
   // ...
@@ -177,11 +177,19 @@ import { addTodo } from "./store/actions";
 
 ### Stencil events
 
-Stencil doesn't allow constants in the `@Event` decorator right now ([MDN](https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events)). So until a different solution is found here, you need to use the event name from this library inside an event emitter (stencil does not extend from HTMLElement).
+For stencil, the `@dispatch(scope=DEFAULT)` decorator can be used, which will assign an `ActionDispatcher`.
+This is required as stencil does neither extend HTMLElement (so you can't do `this.dispatchEvent`) and the `@Event` annotation would have to be set explicitly to the internal event name of.
 
 ```ts
-@Event({ eventName: "dispatchStoreAction", bubbles: true, composed: true })
-private dispatchAction: EventEmitter;
+import { dispatchAction, ActionDispatcher } from "customelement-store-binding";
+
+@dispatcher()
+private dispatchAction: ActionDispatcher;
+
+private finishTodo(todoId: string) {
+  const action = finishTodo(todoId);
+  this.dispatchAction(action);
+}
 ```
 
 Take a look at the [stencil example](https://github.com/mojadev/customelement-store-binding/blob/master/examples/todo-stencil/src/components/todo-list/todo-list.tsx) if you want to see it in action.
