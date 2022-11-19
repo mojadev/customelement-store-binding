@@ -20,7 +20,7 @@
     "@types/uuid": "^3.4.7",
     "babel-preset-env": "^1.7.0",
     "customelement-store-binding": "^0.4.1",
-    "html-webpack-plugin": "^3.2.0",
+    "html-webpack-plugin": "^5.5.0",
     "jasmine": "^3.5.0",
     "karma": "^4.4.1",
     "karma-babel-preprocessor": "^8.0.1",
@@ -34,7 +34,7 @@
     "ts-loader": "^6.2.1",
     "uuid": "^3.4.0",
     "webpack": "^4.41.6",
-    "webpack-cli": "^3.3.11",
+    "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.10.3"
   }
 }
